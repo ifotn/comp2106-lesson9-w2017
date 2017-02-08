@@ -12,6 +12,16 @@ var games = require('./routes/games');
 
 var app = express();
 
+// mongodb connection
+let mongoose = require('mongoose');
+let config = require('./config/globals');
+mongoose.connect(config.db);
+
+let db = mongoose.connection;
+db.once('open', function() {
+  console.log('Connected to mongodb');
+});
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
