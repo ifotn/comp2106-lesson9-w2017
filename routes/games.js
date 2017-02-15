@@ -20,14 +20,17 @@ router.get('/', function(req, res, next) {
       // load the view and pass the games data to it
       // console.log(games);
       res.render('games/index', {
-         games: games
+         games: games,
+         title: 'Video Game Library'
       });
    });
 });
 
 // GET /games/add - show the empty form
 router.get('/add', function(req, res, next) {
-   res.render('games/add');
+   res.render('games/add', {
+      title: 'Add a New Game'
+   });
 });
 
 // POST /games/add - process form submission
@@ -73,8 +76,31 @@ router.get('/:_id', function(req, res, next) {
          return;
       }
       res.render('games/edit', {
-         game: game
+         game: game,
+         title: 'Edit Video Game'
       });
+   });
+});
+
+// POST /games/_id - save updates
+router.post('/:_id', function(req, res, next) {
+   // create an fill a Game object
+   let game = new Game({
+      _id: req.params._id,
+      title: req.body.title,
+      developer: req.body.developer,
+      genre: req.body.genre,
+      year: req.body.year
+   });
+
+   // call Mongoose's Update method, passing the id and the updated game object
+   Game.update({ _id: req.params._id }, game, function(err) {
+      if (err) {
+         console.log(err);
+         res.render('error');
+         return;
+      }
+      res.redirect('/games');
    });
 });
 
