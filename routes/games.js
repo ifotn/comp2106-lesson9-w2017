@@ -7,6 +7,16 @@ let router = express.Router();
 // reference Game model for CRUD
 let Game = require('../models/game');
 
+// auth
+let passport = require('passport');
+
+function isLoggedIn(req, res, next) {
+   if (req.isAuthenticated()) {
+      return next();  // user has logged in already so continue to the next function
+   }
+   res.redirect('/login');
+}
+
 /* GET games index page */
 router.get('/', function(req, res, next) {
 
@@ -21,20 +31,22 @@ router.get('/', function(req, res, next) {
       // console.log(games);
       res.render('games/index', {
          games: games,
-         title: 'Video Game Library'
+         title: 'Video Game Library',
+          user: req.user
       });
    });
 });
 
 // GET /games/add - show the empty form
-router.get('/add', function(req, res, next) {
+router.get('/add', isLoggedIn, function(req, res, next) {
    res.render('games/add', {
-      title: 'Add a New Game'
+      title: 'Add a New Game',
+       user: req.user
    });
 });
 
 // POST /games/add - process form submission
-router.post('/add', function(req, res, next) {
+router.post('/add', isLoggedIn, function(req, res, next) {
    // use our Game model to add a new Game document to mongodb
    Game.create({
       title: req.body.title,
@@ -53,7 +65,7 @@ router.post('/add', function(req, res, next) {
 });
 
 // GET /games/delete/_id - delete the selected game
-router.get('/delete/:_id', function(req, res, next) {
+router.get('/delete/:_id', isLoggedIn, function(req, res, next) {
    // delete game and redirect
    Game.remove({ _id: req.params._id }, function(err) {
       if (err) {
@@ -67,7 +79,7 @@ router.get('/delete/:_id', function(req, res, next) {
 });
 
 // GET /games/_id - show edit form
-router.get('/:_id', function(req, res, next) {
+router.get('/:_id', isLoggedIn, function(req, res, next) {
    // look up the selected game
    Game.findById(req.params._id, function(err, game) {
       if (err) {
@@ -77,13 +89,14 @@ router.get('/:_id', function(req, res, next) {
       }
       res.render('games/edit', {
          game: game,
-         title: 'Edit Video Game'
+         title: 'Edit Video Game',
+          user: req.user
       });
    });
 });
 
 // POST /games/_id - save updates
-router.post('/:_id', function(req, res, next) {
+router.post('/:_id', isLoggedIn, function(req, res, next) {
    // create an fill a Game object
    let game = new Game({
       _id: req.params._id,

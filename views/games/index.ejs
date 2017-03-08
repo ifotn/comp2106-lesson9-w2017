@@ -1,16 +1,18 @@
 <% include ../partials/header.ejs %>
 
 <h1>Games</h1>
-
-<a href="/games/add">Add a New Game</a>
-
+<% if (user) { %>
+    <a href="/games/add">Add a New Game</a>
+<% } %>
 <table class="table table-striped table-hover">
     <tr>
         <th>Title</th>
         <th>Developer</th>
         <th>Genre</th>
         <th>Year</th>
-        <th>Actions</th>
+        <% if (user) { %>
+            <th>Actions</th>
+        <% } %>
     </tr>
     <% for (var i = 0; i < games.length; i++) { %>
         <tr>
@@ -18,10 +20,12 @@
             <td><%= games[i].developer %></td>
             <td><%= games[i].genre %></td>
             <td><%= games[i].year %></td>
-            <td>
-                <a href="/games/<%= games[i]._id %>" class="btn btn-info">Edit</a>
-                <a href="/games/delete/<%= games[i]._id %>" class="btn btn-danger confirmation">Delete</a>
-            </td>
+            <% if (user) { %>
+                <td>
+                    <a href="/games/<%= games[i]._id %>" class="btn btn-info">Edit</a>
+                    <a href="/games/delete/<%= games[i]._id %>" class="btn btn-danger confirmation">Delete</a>
+                </td>
+            <% } %>
         </tr>
     <% } %>
 </table>
