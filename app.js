@@ -5,6 +5,11 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+// passport dependencies
+let passport = require('passport');
+let session = require('express-session');
+let localStrategy = require('passport-local').Strategy;
+
 var index = require('./routes/index');
 var users = require('./routes/users');
 // add the new games controller / router
@@ -34,6 +39,24 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// passport config BEFORE controller references
+app.use(session({
+  secret: 'some string value here',
+    resave: true,
+    saveUninitialized: false
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+// use the Account model to manage users
+let Account = require('./models/account');
+passport.use(Account.createStrategy());
+
+// read / write user login info to mongodb
+passport.serializeUser(Account.serializeUser());
+passport.deserializeUser(Account.deserializeUser());
+
 app.use('/', index);
 app.use('/users', users);
 app.use('/games', games);
@@ -53,7 +76,7 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  res.render('error', { title: 'COMP2106 - Video Game Library'});
 });
 
 module.exports = app;
