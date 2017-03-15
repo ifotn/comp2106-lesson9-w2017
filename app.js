@@ -53,6 +53,27 @@ app.use(passport.session());
 let Account = require('./models/account');
 passport.use(Account.createStrategy());
 
+// facebook auth
+let FacebookStrategy = require('passport-facebook').Strategy;
+
+// get config values
+passport.use(new FacebookStrategy({
+        clientID: globals.facebook.clientID,
+        clientSecret: globals.facebook.clientSecret,
+        callbackURL: globals.facebook.callbackURL,
+        profileFields: ['id', 'displayName', 'emails']
+    },
+    function(accessToken, refreshToken, profile, cb) {
+        Account.findOrCreate({
+          facebookId: profile.id,
+            username: profile.emails[0].value
+        }, function (err, user) {
+            return cb(err, user);
+        });
+    }
+));
+
+
 // read / write user login info to mongodb
 passport.serializeUser(Account.serializeUser());
 passport.deserializeUser(Account.deserializeUser());
