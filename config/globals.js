@@ -9,7 +9,8 @@ module.exports = {
     facebook: {
       clientID: '240472339748735',
       clientSecret: 'eda6a3173acaf45cef30bc56bf3e248c',
-      callbackURL: 'http://localhost:3000/facebook/callback'
+        callbackURL: 'https://gcrfreeman.herokuapp.com/facebook/callback'
+      //callbackURL: 'http://localhost:3000/facebook/callback'
     },
     google: {
        clientID: '380922090373-8v30m2fk9jrajb4ojii8i3oafisujf39.apps.googleusercontent.com',
