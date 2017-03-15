@@ -15,6 +15,7 @@ module.exports = {
     google: {
        clientID: '380922090373-8v30m2fk9jrajb4ojii8i3oafisujf39.apps.googleusercontent.com',
        clientSecret: '9IUjq9E9ojdaqQ1GNC-O4_hE',
-       callbackURL: 'http://localhost:3000/google/callback'
+        callbackURL: 'https://gcrfreeman.herokuapp.com/google/callback'
+       // callbackURL: 'http://localhost:3000/google/callback'
     }
 };
