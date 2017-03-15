@@ -63,4 +63,36 @@ router.get('/logout', function(req, res, next) {
   res.redirect('/');
 });
 
+/* GET /facebook - show FB login popup */
+router.get('/facebook',
+    passport.authenticate('facebook', {
+      scope: 'email'
+    }));
+
+/* GET /facebook/callback - after fb login attempt, decide where to go */
+router.get('/facebook/callback',
+    passport.authenticate('facebook', {
+      failureRedirect: '/login',
+      scope: 'email'
+    }),
+    function(req, res) {
+        // Successful authentication, redirect to games.
+        res.redirect('/games');
+    });
+
+/* GET /google - show google login prompt */
+router.get('/google',
+    passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+/* GET /google/callback - redirect after google login attempt */
+router.get('/google/callback',
+    passport.authenticate('google', {
+        failureRedirect: '/login',
+        scope: 'email'
+    }),
+    function(req, res) {
+        // Successful authentication, redirect to games.
+        res.redirect('/games');
+    });
+
 module.exports = router;

@@ -10,7 +10,8 @@ let findOrCreate = require('mongoose-findorcreate');
 
 // create the model schema.  username and password are included automatically
 let accountSchema = new mongoose.Schema({
-    facebookId: String
+    facebookId: String,
+    googleId: String
 });
 
 accountSchema.plugin(plm);

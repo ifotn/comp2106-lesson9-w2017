@@ -58,9 +58,9 @@ let FacebookStrategy = require('passport-facebook').Strategy;
 
 // get config values
 passport.use(new FacebookStrategy({
-        clientID: globals.facebook.clientID,
-        clientSecret: globals.facebook.clientSecret,
-        callbackURL: globals.facebook.callbackURL,
+        clientID: config.facebook.clientID,
+        clientSecret: config.facebook.clientSecret,
+        callbackURL: config.facebook.callbackURL,
         profileFields: ['id', 'displayName', 'emails']
     },
     function(accessToken, refreshToken, profile, cb) {
@@ -73,6 +73,24 @@ passport.use(new FacebookStrategy({
     }
 ));
 
+// Google Auth
+var GoogleStrategy = require('passport-google-oauth20').Strategy;
+
+passport.use(new GoogleStrategy({
+        clientID: config.google.clientID,
+        clientSecret: config.google.clientSecret,
+        callbackURL: config.google.callbackURL,
+        profileFields: ['id', 'emails']
+    },
+    function(accessToken, refreshToken, profile, cb) {
+        Account.findOrCreate({
+            googleId: profile.id,
+            username: profile.emails[0].value
+        }, function (err, user) {
+            return cb(err, user);
+        });
+    }
+));
 
 // read / write user login info to mongodb
 passport.serializeUser(Account.serializeUser());
@@ -97,7 +115,10 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error', { title: 'COMP2106 - Video Game Library'});
+  res.render('error', {
+      title: 'COMP2106 - Video Game Library',
+      user: req.user
+  });
 });
 
 module.exports = app;
